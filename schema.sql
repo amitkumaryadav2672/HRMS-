@@ -1,0 +1,75 @@
+CREATE DATABASE IF NOT EXISTS hrms_db;
+USE hrms_db;
+
+CREATE TABLE IF NOT EXISTS organizations (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(150) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    pan VARCHAR(30) NOT NULL,
+    gst VARCHAR(30) NOT NULL,
+    department VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    password VARCHAR(100) NOT NULL,
+    employees_count INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS auth_tokens (
+    token_id INT PRIMARY KEY AUTO_INCREMENT,
+    org_id INT NOT NULL,
+    token_value VARCHAR(100) NOT NULL,
+    user_email VARCHAR(150) NOT NULL,
+    role VARCHAR(50) NOT NULL DEFAULT 'Admin',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (org_id) REFERENCES organizations(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS employees (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    org_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL,
+    phone VARCHAR(30) NOT NULL,
+    role VARCHAR(50) NOT NULL DEFAULT 'Staff',
+    department VARCHAR(100) NOT NULL,
+    salary DOUBLE NOT NULL DEFAULT 0.0,
+    join_date VARCHAR(30) NOT NULL,
+    FOREIGN KEY (org_id) REFERENCES organizations(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS attendance (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    org_id INT NOT NULL,
+    employee_id INT NOT NULL,
+    date VARCHAR(30) NOT NULL,
+    status VARCHAR(30) NOT NULL,
+    remarks VARCHAR(255),
+    FOREIGN KEY (org_id) REFERENCES organizations(id) ON DELETE CASCADE,
+    FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS salaries (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    org_id INT NOT NULL,
+    employee_id INT NOT NULL,
+    month_year VARCHAR(30) NOT NULL,
+    basic_salary DOUBLE NOT NULL,
+    bonus DOUBLE NOT NULL DEFAULT 0.0,
+    deductions DOUBLE NOT NULL DEFAULT 0.0,
+    net_salary DOUBLE NOT NULL,
+    status VARCHAR(30) NOT NULL DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (org_id) REFERENCES organizations(id) ON DELETE CASCADE,
+    FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS notices_holidays (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    org_id INT NOT NULL,
+    type VARCHAR(30) NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    description TEXT NOT NULL,
+    event_date VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (org_id) REFERENCES organizations(id) ON DELETE CASCADE
+);

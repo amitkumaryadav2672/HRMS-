@@ -1,0 +1,10 @@
+*.class
+bin/
+out/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/shelf/
+.idea/caches/
+*.log
+scratch/
+.vscode/
